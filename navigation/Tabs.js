@@ -36,8 +36,8 @@ const Tabs = () => {
         name="Movies"
         component={Movies}
         options={{
-          tabBarIcon: ({color, size }) => {
-            return <Ionicons name="film" size={size} color={color} />;
+          tabBarIcon: ({ color, size }) => {
+            return <Ionicons name="film-outline" size={size} color={color} />;
           },
         }}
       />
@@ -45,8 +45,8 @@ const Tabs = () => {
         name="Tv"
         component={Tv}
         options={{
-          tabBarIcon: ({color, size }) => {
-            return <Ionicons name="tv" size={size} color={color} />;
+          tabBarIcon: ({ color, size }) => {
+            return <Ionicons name="tv-outline" size={size} color={color} />;
           },
         }}
       />
@@ -54,8 +54,8 @@ const Tabs = () => {
         name="Search"
         component={Search}
         options={{
-          tabBarIcon: ({color, size }) => {
-            return <Ionicons name="search" size={size} color={color} />;
+          tabBarIcon: ({ color, size }) => {
+            return <Ionicons name="search-outline" size={size} color={color} />;
           },
         }}
       />
