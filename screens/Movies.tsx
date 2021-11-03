@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Swiper from "react-native-swiper";
-import { ActivityIndicator, Dimensions } from "react-native";
+import { ActivityIndicator, Dimensions, RefreshControl } from "react-native";
 import Slide from "../components/Slide";
-import { ScrollView } from "react-native-gesture-handler";
 import Poster from "../components/Poster";
+import VMedia from "../components/VMedia";
+import HMedia from "../components/HMedia";
 
 const API_KEY = "356723332b0147990f77bce41e0a96bb";
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [nowPlaying, setNowPlaying] = useState([]);
   const [upComing, setUpcoming] = useState([]);
@@ -42,6 +44,11 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     await Promise.all([getNowPlaying(), getTrending(), getUpcoming()]);
     setLoading(false);
   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getData();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     getData();
@@ -51,7 +58,11 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       <ActivityIndicator size="small" />
     </Loader>
   ) : (
-    <Container>
+    <Container
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <Swiper
         loop
         horizontal
@@ -84,37 +95,24 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           contentContainerStyle={{ paddingLeft: 30 }}
         >
           {trending.map((movie) => (
-            <Movie key={movie.id}>
-              <Poster path={movie.poster_path} />
-              <Title>
-                {movie.original_title.slice(0, 13)}
-                {movie.original_title.length > 13 ? "..." : null}
-              </Title>
-              <Votes>
-                {movie.vote_average > 0
-                  ? `⭐${movie.vote_average}/10`
-                  : `Coming soon`}
-              </Votes>
-            </Movie>
+            <VMedia
+              key={movie.id}
+              posterPath={movie.poster_path}
+              originalTitle={movie.original_title}
+              voteAverage={movie.vote_average}
+            />
           ))}
         </TrendingScroll>
       </ListContainer>
       <ComingSoonTitle>Coming Soon</ComingSoonTitle>
       {upComing.map((movie) => (
-        <HMovie key={movie.id}>
-          <Poster path={movie.poster_path} />
-          <HColumn>
-            <Title>{movie.original_title}</Title>
-            <Release>
-              {new Date(movie.release_date).toLocaleDateString("ko")}
-            </Release>
-            <Overview>
-              {movie.overview !== "" && movie.overview.length > 140
-                ? `${movie.overview.slice(0, 140)}...`
-                : movie.overview}
-            </Overview>
-          </HColumn>
-        </HMovie>
+        <HMedia
+          key={movie.id}
+          posterPath={movie.poster_path}
+          originalTitle={movie.original_title}
+          overview={movie.overview}
+          releaseDate={movie.release_date}
+        />
       ))}
     </Container>
   );
@@ -139,54 +137,14 @@ const ListTitle = styled.Text`
   margin-left: 30px;
 `;
 
-const Movie = styled.View`
-  margin-right: 20px;
-  align-items: center;
-`;
-
 const TrendingScroll = styled.ScrollView`
   margin-top: 20px;
-`;
-
-const Title = styled.Text`
-  color: white;
-  font-weight: 600;
-  margin-top: 7px;
-  margin-bottom: 5px;
-`;
-
-const Votes = styled.Text`
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 10px;
 `;
 
 const ListContainer = styled.View`
   margin-bottom: 40px;
 `;
 
-const HMovie = styled.View`
-  padding: 0px 30px;
-  flex-direction: row;
-  margin-bottom: 30px;
-`;
-
-const HColumn = styled.View`
-  margin-left: 15px;
-  width: 80%;
-`;
-
-const Overview = styled.Text`
-  color: white;
-  opacity: 0.8;
-  width: 80%;
-`;
-
-const Release = styled.Text`
-  color: white;
-  font-size: 12px;
-  margin-vertical: 10px;
-`;
-
 const ComingSoonTitle = styled(ListTitle)`
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `;
