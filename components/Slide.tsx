@@ -77,7 +77,7 @@ const Column = styled.View`
 const Overview = styled.Text<{ isDark: boolean }>`
   margin-top: 10px;
   color: ${(props) =>
-    props.isDark ? "rgba(255, 255, 255, 0.8)" : "rgba 0, 0, 0, 0.8)"};
+    props.isDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)"};
 `;
 
 const Votes = styled(Overview)`
