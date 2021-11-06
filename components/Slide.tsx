@@ -20,7 +20,7 @@ const Slide: React.FC<SlideProps> = ({
   voteAverage,
   overview,
 }) => {
-  const isDark = useColorScheme() === "dark";
+  const isDark = useColorScheme() === "dark" || true;
 
   return (
     <View>

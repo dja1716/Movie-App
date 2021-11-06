@@ -24,7 +24,7 @@ const loadImages = (images) =>
   });
 
 export default function App() {
-  const isDark = useColorScheme() === "dark";
+  const isDark = useColorScheme() === "dark" || true;
   const [ready, setReady] = useState(false);
   const onFinish = () => setReady(true);
   const startLoading = async () => {

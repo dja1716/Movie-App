@@ -13,6 +13,7 @@ import Loader from '../components/Loader';
 import HList from "../components/HList";
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
   const {
     isLoading: nowPlayingLoading,
@@ -31,13 +32,13 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   } = useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.trending);
 
   const onRefresh = async () => {
-    queryClient.refetchQueries(["movies"]);
+    setRefreshing(true);
+    await queryClient.refetchQueries(["movies"]);
+    setRefreshing(false);
   };
 
   const movieKeyExtractor = (item: Movie) => item.id + "";
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-  const refreshing =
-    isRefetchinUpcoming || isRefetchingNowPlaying || isRefetchingTrending;
   return loading ? (
     <Loader />
   ) : upcomingData ? (
