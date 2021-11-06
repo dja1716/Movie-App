@@ -9,7 +9,7 @@ import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
 import { useQuery, QueryClient, useQueryClient } from "react-query";
 import { moviesApi, MovieResponse, Movie } from "../api";
-import Loader from '../components/Loader';
+import Loader from "../components/Loader";
 import HList from "../components/HList";
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
@@ -68,10 +68,13 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
                 originalTitle={movie.original_title}
                 voteAverage={movie.vote_average}
                 overview={movie.overview}
+                fullData={movie}
               />
             ))}
           </Swiper>
-          {trendingData ? <HList title="Trending Movie" data={trendingData.results} /> : null}
+          {trendingData ? (
+            <HList title="Trending Movie" data={trendingData.results} />
+          ) : null}
           <ComingSoonTitle>Coming Soon</ComingSoonTitle>
         </>
       }
@@ -84,6 +87,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           originalTitle={item.original_title}
           overview={item.overview}
           releaseDate={item.release_date}
+          fullData={item}
         />
       )}
     />
@@ -93,8 +97,6 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 export default Movies;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-
 
 const ListTitle = styled.Text`
   color: white;
