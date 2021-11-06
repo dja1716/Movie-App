@@ -31,6 +31,7 @@ const Tabs = () => {
           fontSize: 10,
           fontWeight: "600",
         },
+        //unmountOnBlur: true,
       }}
     >
       <Tab.Screen
