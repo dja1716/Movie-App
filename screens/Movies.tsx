@@ -7,7 +7,12 @@ import Slide from "../components/Slide";
 import Poster from "../components/Poster";
 import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
-import { useQuery, QueryClient, useQueryClient } from "react-query";
+import {
+  useQuery,
+  QueryClient,
+  useQueryClient,
+  useInfiniteQuery,
+} from "react-query";
 import { moviesApi, MovieResponse, Movie } from "../api";
 import Loader from "../components/Loader";
 import HList from "../components/HList";
@@ -23,13 +28,23 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const {
     isLoading: upcomingLoading,
     data: upcomingData,
-    isRefetching: isRefetchinUpcoming,
-  } = useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.upcoming);
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery<MovieResponse>(
+    ["movies", "upcoming"],
+    moviesApi.upcoming,
+    {
+      getNextPageParam: (currentPage) => {
+        const nextPage = currentPage.page + 1;
+        return nextPage > currentPage.total_pages ? null : nextPage;
+      },
+    }
+  );
   const {
     isLoading: trendingLoading,
     data: trendingData,
     isRefetching: isRefetchingTrending,
-  } = useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.trending);
+  } = useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -39,10 +54,17 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 
   const movieKeyExtractor = (item: Movie) => item.id + "";
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
+  const loadMore = () => {
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  };
   return loading ? (
     <Loader />
   ) : upcomingData ? (
     <FlatList
+      onEndReached={loadMore}
+      onEndReachedThreshold={0.4}
       onRefresh={onRefresh}
       refreshing={refreshing}
       ListHeaderComponent={
@@ -78,7 +100,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           <ComingSoonTitle>Coming Soon</ComingSoonTitle>
         </>
       }
-      data={upcomingData.results}
+      data={upcomingData.pages.map((page) => page.results).flat()}
       keyExtractor={movieKeyExtractor}
       ItemSeparatorComponent={HSeperator}
       renderItem={({ item }) => (
