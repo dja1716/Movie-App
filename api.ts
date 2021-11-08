@@ -61,7 +61,7 @@ export const moviesApi: Fetchers<MovieResponse> = {
     ),
   upcoming: (pageParam) =>
     fetch(
-      `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1&region=KR&page=${pageParam}`
+      `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&region=KR&page=${pageParam}`
     ).then((res) => res.json()),
   nowPlaying: () =>
     fetch(
